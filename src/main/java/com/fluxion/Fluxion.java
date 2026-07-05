@@ -5,6 +5,7 @@ import com.fluxion.registry.ModBlocks;
 import com.fluxion.registry.ModCreativeTabs;
 import com.fluxion.registry.ModItems;
 import com.fluxion.registry.ModMenus;
+import com.fluxion.registry.ModRecipeSerializers;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +24,7 @@ public class Fluxion {
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
+        ModRecipeSerializers.RECIPE_SERIALIZERS.register(modBus);
 
         // SERVER config: per-world, synced to remote clients on login. All balance
         // numbers (FE/t, buffers, transfer rates, efficiency) live here — never hardcoded.

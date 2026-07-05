@@ -1,8 +1,8 @@
 package com.fluxion.registry;
 
 import com.fluxion.Fluxion;
+import com.fluxion.item.FluxMachineBlockItem;
 import com.fluxion.machine.MachineTier;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,12 +37,12 @@ public final class ModItems {
         for (MachineTier tier : MachineTier.values()) {
             COMBUSTION_GENERATORS.put(tier, ITEMS.register(
                     "combustion_generator_" + tier.suffix(),
-                    () -> new BlockItem(ModBlocks.COMBUSTION_GENERATORS.get(tier).get(), new Item.Properties())));
+                    () -> new FluxMachineBlockItem(ModBlocks.COMBUSTION_GENERATORS.get(tier).get(), new Item.Properties())));
         }
         for (MachineTier tier : MachineTier.values()) {
             ENERGY_CELLS.put(tier, ITEMS.register(
                     "energy_cell_" + tier.suffix(),
-                    () -> new BlockItem(ModBlocks.ENERGY_CELLS.get(tier).get(), new Item.Properties())));
+                    () -> new FluxMachineBlockItem(ModBlocks.ENERGY_CELLS.get(tier).get(), new Item.Properties())));
         }
     }
 

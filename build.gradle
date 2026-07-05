@@ -59,11 +59,17 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // JEI, Curios, etc. will be added here as soft dependencies in later milestones.
+    // Uncomment to pull JEI into the dev environment (optional — the mod has no
+    // compile-time JEI dependency; tier-upgrade recipes render in JEI's vanilla
+    // crafting category automatically).
+    // maven { url = 'https://maven.blamejared.com/' }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Optional JEI at runtime in dev:
+    // runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.20.0.106")
 }
 
 tasks.named('processResources', ProcessResources).configure {

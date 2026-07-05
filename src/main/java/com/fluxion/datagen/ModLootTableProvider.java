@@ -6,7 +6,13 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
@@ -25,8 +31,19 @@ public final class ModLootTableProvider {
 
         @Override
         protected void generate() {
-            // NBT-preserving drops (stored energy surviving break/re-place) land in M2.
-            ModBlocks.BLOCKS.getEntries().forEach(block -> dropSelf(block.get()));
+            // Machines keep their stored energy in the dropped item ("Energy" is
+            // copied into BlockEntityTag, which vanilla BlockItem restores on
+            // placement). Fuel/inventories spill on break instead.
+            ModBlocks.BLOCKS.getEntries().forEach(block -> machineDrop(block.get()));
+        }
+
+        private void machineDrop(Block block) {
+            add(block, LootTable.lootTable().withPool(
+                    LootPool.lootPool()
+                            .setRolls(ConstantValue.exactly(1))
+                            .add(applyExplosionCondition(block, LootItem.lootTableItem(block)
+                                    .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                                            .copy("Energy", "BlockEntityTag.Energy"))))));
         }
 
         @Override

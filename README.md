@@ -12,7 +12,7 @@ Thermal, jetpack mods, and anything else speaking `IEnergyStorage`.
 | Milestone | Contents | Status |
 |---|---|---|
 | **M1 — Skeleton + first energy flow** | Mod scaffolding, server config, creative tab, Flux Ingot, Machine Frames T1–T3, Combustion Generator T1–T3, Energy Cell T1–T3, full datagen | ✅ done |
-| M2 — Tier upgrade system | `fluxion:tier_upgrade` recipe type with NBT preservation, break/re-place state retention, JEI | ⬜ |
+| **M2 — Tier upgrade system** | `fluxion:tier_upgrade` recipe type with NBT preservation, break/re-place energy retention, stored-energy tooltips | ✅ done |
 | M3 — Thermal + Reactor | Fluid-fueled thermal generator; reactor with fuel rods, heat, coolant, scram/meltdown | ⬜ |
 | M4 — Wireless block network | Transmitter/Receiver blocks, Flux Linker, SavedData network registry | ⬜ |
 | M5 — Personal wireless receiver | Inventory-charging wearable, Curios soft-dep, tier range rules | ⬜ |
@@ -48,11 +48,22 @@ datagen provider) — models, recipes, loot tables, tags, and lang files are all
 All balance numbers (FE/t, buffers, transfer rates, fuel efficiency) live in the
 **server config**: `<world>/serverconfig/fluxion-server.toml`.
 
-Notes for M1:
-- T2/T3 machines currently use placeholder shapeless upgrade recipes (machine + frame +
-  flux ingots). M2 replaces these with the custom NBT-preserving upgrade recipe type.
+## Testing M2 (tier upgrades)
+
+1. Run a T1 Combustion Generator until it has stored energy, then break it — the
+   dropped item's tooltip shows "Stored: X FE", and re-placing it restores the energy.
+2. Put the charged T1 generator + a T2 Machine Frame + 4 Flux Ingots anywhere in a
+   crafting grid → T2 generator **with the stored energy carried over** (tooltip
+   confirms). Same for T2→T3 and for Energy Cells.
+3. Upgrading a partly-charged cell: stored energy carries over; capacity becomes the
+   new tier's (clamped from config on placement).
+4. With JEI installed the upgrade recipes appear in the vanilla crafting category
+   (they implement `CraftingRecipe` with full ingredient lists).
+
+Notes:
 - The Energy Cell is passive (accepts and provides FE on all sides); per-side IO config
   comes later.
+- Fuel spills on break (only energy travels in the item), by design.
 
 ## Design notes
 

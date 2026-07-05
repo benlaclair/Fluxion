@@ -1,5 +1,6 @@
 package com.fluxion.datagen;
 
+import com.fluxion.Fluxion;
 import com.fluxion.machine.MachineTier;
 import com.fluxion.registry.ModItems;
 import net.minecraft.data.PackOutput;
@@ -7,9 +8,12 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ModRecipeProvider extends RecipeProvider {
@@ -81,24 +85,20 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_machine_frame_t1", has(ModItems.MACHINE_FRAMES.get(MachineTier.T1).get()))
                 .save(writer);
 
-        // --- Tier upgrades ---
-        // Placeholder shapeless recipes until the custom NBT-preserving
-        // fluxion:tier_upgrade recipe type lands in milestone M2.
-        addPlaceholderUpgrade(writer, ModItems.COMBUSTION_GENERATORS, "combustion_generator");
-        addPlaceholderUpgrade(writer, ModItems.ENERGY_CELLS, "energy_cell");
+        // --- Tier upgrades (fluxion:tier_upgrade — preserves machine NBT) ---
+        addTierUpgrades(writer, ModItems.COMBUSTION_GENERATORS, "combustion_generator");
+        addTierUpgrades(writer, ModItems.ENERGY_CELLS, "energy_cell");
     }
 
-    private void addPlaceholderUpgrade(Consumer<FinishedRecipe> writer,
-                                       java.util.Map<MachineTier, net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item>> family,
-                                       String name) {
+    private void addTierUpgrades(Consumer<FinishedRecipe> writer,
+                                 Map<MachineTier, RegistryObject<Item>> family, String name) {
         for (MachineTier tier : new MachineTier[]{MachineTier.T2, MachineTier.T3}) {
             MachineTier previous = MachineTier.values()[tier.index() - 1];
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, family.get(tier).get())
-                    .requires(family.get(previous).get())
-                    .requires(ModItems.MACHINE_FRAMES.get(tier).get())
-                    .requires(ModItems.FLUX_INGOT.get(), 4)
-                    .unlockedBy("has_" + name + "_" + previous.suffix(), has(family.get(previous).get()))
-                    .save(writer);
+            TierUpgradeRecipeBuilder.upgrade(family.get(previous).get(), family.get(tier).get())
+                    .addIngredient(ModItems.MACHINE_FRAMES.get(tier).get())
+                    .addIngredient(ModItems.FLUX_INGOT.get(), 4)
+                    .save(writer, new ResourceLocation(Fluxion.MOD_ID,
+                            name + "_" + tier.suffix() + "_upgrade"));
         }
     }
 }

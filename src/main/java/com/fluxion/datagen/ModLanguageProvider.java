@@ -24,5 +24,6 @@ public class ModLanguageProvider extends LanguageProvider {
         }
 
         add("gui.fluxion.energy", "%s / %s FE");
+        add("tooltip.fluxion.stored_energy", "Stored: %s FE");
     }
 }
